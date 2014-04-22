@@ -58,7 +58,7 @@ Then, simply open `http://127.0.0.1:<port>/<file_id>` in your media player.
 The default streaming port is `8888`. If you don't specify the target
 file, tget automatically choose the biggest file in the torrent.
 
-While streamed data has higher priority over non-streamed data (such as
+While stream data has higher priority than non-stream data (such as
 .nfo or preview files), tget still download the entire torrent data
 when bandwidth allows it. When the `-w` option is given, tget will wait
 an incoming stream connection before dowloading any data from the torrent.

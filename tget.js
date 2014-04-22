@@ -36,7 +36,7 @@ var argv = require("minimist")(process.argv.slice(2));
  *  -b PATH     Buffer path                             md5(magnet)     -
  *  -c NUM      Maximum connections                     100             -
  *  -d NUM      Number of DHT peers to find             10000           -
- *  -e          Epemeral streaming (don't write)        -               -
+ *  -e          Ephemeral mode (don't write)            -               -
  *  -i          Stay idle and don't quit when done      -               -
  *  -n          Force a new download                    -               -
  *  -s PORT?    Enable live streaming on port N         8888            -
@@ -102,7 +102,7 @@ if(argv.S) {
         // Exit safety check
         function exit(clean) {
             if(clean && (!TorrentEngine.done || StreamServer.open_streams > 0 || argv.i)) return;
-            TorrentEngine.exit(clean || argv.x, function() {
+            TorrentEngine.exit(clean || argv.e, function() {
                 rl.write("\n");
                 rl.close();
                 process.exit(0);

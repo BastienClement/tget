@@ -84,5 +84,8 @@ If the `-S` option is given, no other option will be used.
 
 MIT
 
+---
+
 Portion of streaming code taken from <https://github.com/mafintosh/peerflix>
+
 Copyright (C) 2013 Mathias Buus Madsen <mathiasbuus@gmail.com>

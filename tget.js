@@ -39,9 +39,10 @@ var argv = require("minimist")(process.argv.slice(2));
  *  -e          Ephemeral mode (don't write)            -               -
  *  -i          Stay idle and don't quit when done      -               -
  *  -n          Force a new download                    -               -
+ *  -p PEER     Explicit peer (in the form addr:ip)     -               -
  *  -s PORT?    Enable live streaming on port N         8888            -
  *  -t          Disable trackers                        -               -
- *  -w          Wait for client before downloading      -               (impl -e)
+ *  -w          Wait for client before downloading      -               (impl -e, -i)
  *
  *  -S PORT?    Local streaming mode on port N          8888            -
  *              * No downloading at all. The argument is the path to local files.
@@ -51,6 +52,11 @@ var argv = require("minimist")(process.argv.slice(2));
 if(argv.w && !argv.s) {
     console.error("-w option requires -s");
     return;
+}
+
+if(argv.w) {
+    argv.e = true;
+    argv.i = true;
 }
 
 if(argv.S) {

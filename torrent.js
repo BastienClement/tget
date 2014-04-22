@@ -59,7 +59,7 @@ TorrentEngine.load = function(torrent, opts, cb) {
     var md5 = crypto.createHash("md5");
     md5.update(torrent);
     TorrentEngine.id = md5.digest("hex");
-    TorrentEngine.opts.path = path.join(process.cwd(), "." + TorrentEngine.id);
+    TorrentEngine.opts.path = path.join(process.cwd(), TorrentEngine.id);
 
     // Copy options
     var opts_mapping = {

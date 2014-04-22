@@ -140,6 +140,10 @@ TorrentEngine.init = function(torrent, opts) {
             TorrentEngine._checkDone();
         });
 
+        // Pause or resume the swarm when interest changes
+        engine.on("uninterested", function() { engine.swarm.pause(); });
+        engine.on("interested", function() { engine.swarm.resume(); });
+
         // Explicit peer connection
         TorrentEngine.connect.forEach(function(peer) {
             engine.connect(peer);

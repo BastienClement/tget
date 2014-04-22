@@ -16,7 +16,7 @@ Command-line torrent downloader and HTTP streaming server
 ### Options
 
 |  Option    |  Description                          |  Default      |
-|--------------------------------------------------------------------|
+|------------|---------------------------------------|---------------|
 |  -b PATH   |  Buffer path                          |  md5(source)  |
 |  -c NUM    |  Maximum connections                  |  100          |
 |  -d NUM    |  Number of DHT peers to find          |  10000        |

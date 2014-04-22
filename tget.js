@@ -48,6 +48,11 @@ var argv = require("minimist")(process.argv.slice(2));
  *              * Excludes every other options.
  */
 
+if(argv.w && !argv.s) {
+    console.error("-w option requires -s");
+    return;
+}
+
 if(argv.S) {
     // File stream mode
     var local_path;

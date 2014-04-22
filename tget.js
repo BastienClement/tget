@@ -120,7 +120,11 @@ if(argv.S) {
         // Exit safety check
         function exit(clean) {
             if(clean && (!TorrentEngine.done || StreamServer.open_streams > 0 || argv.i)) return;
-            TorrentEngine.exit(clean || argv.e, function() {
+
+            // Forced exits are sometimes clean
+            clean = clean || argv.e || (TorrentEngine.done && argv.i);
+
+            TorrentEngine.exit(clean, function() {
                 rl.write("\n");
                 rl.close();
                 process.exit(0);

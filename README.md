@@ -15,18 +15,18 @@ Command-line torrent downloader and HTTP streaming server
 
 ### Options
 
-|  Option    |  Description                          |  Default      |
-|------------|---------------------------------------|---------------|
-|  -b PATH   |  Buffer path                          |  md5(source)  |
-|  -c NUM    |  Maximum connections                  |  100          |
-|  -d NUM    |  Number of DHT peers to find          |  10000        |
-|  -e        |  Ephemeral mode                       |               |
-|  -i        |  Stay idle and don't quit when done   |               |
-|  -n        |  Force a new download                 |               |
-|  -p PEER   |  Explicit peer (in the form addr:ip)  |               |
-|  -s PORT?  |  Enable live streaming on port N      |  8888         |
-|  -t        |  Disable trackers                     |               |
-|  -w        |  Wait for client before downloading   |               |
+|  Option      |  Description                          |  Default      |
+|--------------|---------------------------------------|---------------|
+|  `-b PATH`   |  Buffer path                          |  md5(source)  |
+|  `-c NUM`    |  Maximum connections                  |  100          |
+|  `-d NUM`    |  Number of DHT peers to find          |  10000        |
+|  `-e`        |  Ephemeral mode                       |               |
+|  `-i`        |  Stay idle and don't quit when done   |               |
+|  `-n`        |  Force a new download                 |               |
+|  `-p PEER`   |  Explicit peer (in the form addr:ip)  |               |
+|  `-s PORT?`  |  Enable live streaming on port N      |  8888         |
+|  `-t`        |  Disable trackers                     |               |
+|  `-w`        |  Wait for client before downloading   |               |
 
 ### Buffer directory / Ephemeral mode
 

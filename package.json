@@ -1,0 +1,18 @@
+{
+    "name": "tget",
+    "version": "0.5.0",
+    "license": "MIT",
+    "repository": "git://github.com/galedric/tget.git",
+    "description": "Command-line torrent downloader and HTTP streaming server",
+    "bin": {
+        "tget": "./tget.js"
+    },
+    "dependencies": {
+        "mime": "~1.2.11",
+        "minimist": "~0.0.8",
+        "mkdirp": "~0.3.5",
+        "pump": "~0.3.1",
+        "range-parser": "~1.0.0",
+        "torrent-stream": "~0.7.0"
+    }
+}

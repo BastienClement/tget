@@ -11,7 +11,7 @@ Command-line torrent downloader and HTTP streaming server
 
 ### Example
 
-`tget "magnet:?xt=urn:btih:757fc565c56462b28b4f..." -eiws 9000`
+`tget "magnet:?xt=urn:btih:757fc565c56462b28b4f..." -s 9000`
 
 ### Options
 

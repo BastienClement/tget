@@ -59,6 +59,7 @@ StreamServer.init = function(port, files) {
         if(u.pathname === "/favicon.ico") return response.end();
         if(u.pathname === "/") u.pathname = "/" + StreamServer.def_idx;
 
+        // Allow random file extensions to be given (http://127.0.0.1:8888/2.srt)
         var i = Number(u.pathname.slice(1).split(".")[0]) - 1;
 
         if(isNaN(i) || i >= files.length || i < 0) {

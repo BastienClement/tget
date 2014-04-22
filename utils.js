@@ -21,10 +21,12 @@
     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+// Pad number with spaces until fixed width
 exports.pad = function(n, length) {
     return ("            ".slice(0, length-(""+n).length)) + n;
 };
 
+// Format bytes size string
 exports.bytes = function(b) {
     var unit = 'B';
 

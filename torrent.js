@@ -55,31 +55,21 @@ TorrentEngine.load = function(torrent, opts, cb) {
         return cb(null);
     }
 
-    // Compute download id
+    // Compute download id and buffer path
     var md5 = crypto.createHash("md5");
     md5.update(torrent);
+
     TorrentEngine.id = md5.digest("hex");
     TorrentEngine.opts.path = path.join(process.cwd(), TorrentEngine.id);
 
-    // Copy options
-    var opts_mapping = {
-        c: "connections",
-        b: "path",
-        V: ["verify", false],
-        d: "dht",
-        T: ["tracker", false]
-    };
-
-    for(var key in opts) {
-        var mapping = opts_mapping[key];
-        if(mapping) {
-            if(Array.isArray(mapping)) {
-                TorrentEngine.opts[mapping[0]] = mapping[1];
-            } else {
-                TorrentEngine.opts[mapping] = opts[key];
-            }
-        }
-    }
+    // Options
+    if(opts.c) { TorrentEngine.opts.connections = opts.c; }
+    if(opts.b) { TorrentEngine.opts.path = opts.b; }
+    if(opts.n) { TorrentEngine.opts.verify = false; }
+    if(opts.d) { TorrentEngine.opts.dht = opts.d; }
+    if(opts.t) { TorrentEngine.opts.tracker = false; }
+    if(opts.e) { ephemeral = true; }
+    if(opts.w) { wait = true; }
 
     if(opts.p) {
         if(Array.isArray(opts.p)) {
@@ -88,14 +78,6 @@ TorrentEngine.load = function(torrent, opts, cb) {
             TorrentEngine.connect.push(opts.p);
         }
     }
-
-    if(opts.c) { TorrentEngine.opts.connections = opts.c; }
-    if(opts.b) { TorrentEngine.opts.path = opts.b; }
-    if(opts.n) { TorrentEngine.opts.verify = false; }
-    if(opts.d) { TorrentEngine.opts.dht = opts.d; }
-    if(opts.t) { TorrentEngine.opts.tracker = false; }
-    if(opts.e) { ephemeral = true; }
-    if(opts.w) { ephemeral = wait = true; }
 
     // Magnet link
     if(torrent.slice(0, 7) == "magnet:") {
@@ -132,15 +114,18 @@ TorrentEngine.init = function(torrent, opts) {
         TorrentEngine.torrent = engine.torrent;
         TorrentEngine.wires = engine.swarm.wires;
         TorrentEngine.files = engine.files.filter(function(file) {
+            // TODO: maybe a filtering option
             return true;
         });
 
+        // Start the download of every file (unless -w)
         if(!wait) {
             TorrentEngine.files.forEach(function(file) {
                 file.select();
             });
         }
 
+        // Resuming a download ?
         for(var i = 0; i < TorrentEngine.total_pieces; i++) {
             if(engine.bitfield.get(i)) {
                 ++TorrentEngine.finished_pieces;
@@ -148,16 +133,19 @@ TorrentEngine.init = function(torrent, opts) {
         }
         TorrentEngine._checkDone();
 
+        // New piece downlaoded
         engine.on("verify", function() {
             download_snapshot = engine.swarm.downloaded;
             ++TorrentEngine.finished_pieces;
             TorrentEngine._checkDone();
         });
 
+        // Explicit peer connection
         TorrentEngine.connect.forEach(function(peer) {
             engine.connect(peer);
         });
 
+        // We're ready
         TorrentEngine.emit("ready");
     });
 };
@@ -173,6 +161,7 @@ TorrentEngine._writeFiles = function() {
     if(writing_files) return;
     writing_files = true;
 
+    // Ephemeral mode doesn't write files
     if(ephemeral) {
         TorrentEngine.done = true;
         TorrentEngine.emit("done");
@@ -181,27 +170,30 @@ TorrentEngine._writeFiles = function() {
 
     var files_done = 0;
     TorrentEngine.files.forEach(function(file) {
+        // Ensure the file's directory is available
         var file_dir = path.join(".", path.dirname(file.path));
         if(file_dir != ".") {
             mkdirp.sync(file_dir);
         }
 
-        var s_out = fs.createWriteStream(file.path + ".tmp");
+        var s_out = fs.createWriteStream(file.path);
         var s_in = file.createReadStream();
 
+        // Watch write completion
         s_out.on("close", function() {
-            fs.renameSync(file.path + ".tmp", file.path);
             if(++files_done >= TorrentEngine.files.length) {
                 TorrentEngine.done = true;
                 TorrentEngine.emit("done");
             }
         })
 
+        // Let's go!
         s_in.pipe(s_out);
     });
 };
 
 TorrentEngine.downloadPercent = function() {
+    // Return range: 0-100
     return Math.floor((TorrentEngine.finished_pieces/TorrentEngine.total_pieces) * 100);
 };
 

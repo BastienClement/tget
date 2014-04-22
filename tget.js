@@ -49,6 +49,7 @@ var argv = require("minimist")(process.argv.slice(2));
  *              * Excludes every other options.
  */
 
+// Options check
 if(argv.w && !argv.s) {
     console.error("-w option requires -s");
     return;
@@ -60,7 +61,9 @@ if(argv.w) {
 }
 
 if(argv.S) {
+    //
     // File stream mode
+    //
     var local_path;
     if(!(local_path = argv._[0])) {
         local_path = argv.S;
@@ -91,6 +94,7 @@ if(argv.S) {
         }
     }
 
+    // Fake torrent-stream files structure
     torrentize(local_path);
 
     console.log("Available files:");
@@ -101,8 +105,11 @@ if(argv.S) {
     StreamServer.init(argv.S, files);
     console.log("\nLocal streaming enabled on port " + StreamServer.port + " (default file is " + StreamServer.def_idx + ")");
 } else {
+    //
     // Torrent download mode
+    //
     TorrentEngine.load(argv._[0], argv, function(torrent) {
+        // Missing or invalid argument
         if(!torrent) {
             console.log("Usage: tget <path|url|magnet> [options]");
             return;
@@ -147,10 +154,12 @@ if(argv.S) {
             function print_progress() {
                 var buf = [];
 
+                // Percent indicator
                 var percent = TorrentEngine.downloadPercent();
                 buf.push(utils.pad(percent, 3) + "%");
                 buf.push(" ");
 
+                // Progress bar
                 var twens_percent = Math.floor(percent*2.5/10);
                 buf.push("[");
                 buf.push("==============================".slice(0, twens_percent));
@@ -159,16 +168,19 @@ if(argv.S) {
                 buf.push("]");
                 buf.push("  ");
 
+                // Downloaded bytes
                 buf.push(utils.bytes(TorrentEngine.downloadedBytes()));
                 buf.push("  ");
 
+                // Download speed
                 buf.push(utils.bytes(TorrentEngine.downloadSpeed()));
                 buf.push("/s");
                 buf.push("  ");
 
+                // Peers informations
                 function active(wire) {
                     return !wire.peerChoking;
-                };
+                }
 
                 buf.push(TorrentEngine.wires.filter(active).length);
                 buf.push("/");
@@ -176,6 +188,7 @@ if(argv.S) {
                 buf.push(" peers");
                 buf.push("  ");
 
+                // Stream informations
                 if(StreamServer.enabled) {
                     buf.push(StreamServer.open_streams);
                     buf.push(" streams");
@@ -185,6 +198,7 @@ if(argv.S) {
             }
 
             function clear_line() {
+                // Erase the last printed line
                 rl.write("", { ctrl: true, name: "u" });
             }
 
@@ -202,11 +216,13 @@ if(argv.S) {
 
             setInterval(update_gui, 1000);
 
+            // Download is fully done
             TorrentEngine.on("done", function() {
                 update_gui(true);
                 exit(true);
             });
 
+            // Init streaming server
             if(argv.s) {
                 StreamServer.init(argv.s, TorrentEngine.files);
 
@@ -218,6 +234,7 @@ if(argv.S) {
                 });
             }
 
+            // Initial progress bar painting
             update_gui();
         });
     });

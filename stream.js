@@ -104,6 +104,11 @@ StreamServer.init = function(port, files) {
         pump(file.createReadStream(range), response);
     });
 
+    // Prevent timeout on paused streams
+    server.on("connection", function(socket) {
+        socket.setTimeout(36000000);
+    });
+
     // Bind
     server.listen(StreamServer.port);
 };

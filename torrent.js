@@ -108,6 +108,12 @@ TorrentEngine.load = function(torrent, opts, cb) {
 
 TorrentEngine.init = function(torrent, opts) {
     TorrentEngine.engine = engine = torrentStream(torrent, opts || TorrentEngine.opts);
+
+    // Explicit peer connection
+    TorrentEngine.connect.forEach(function(peer) {
+        engine.connect(peer);
+    });
+
     engine.on("ready", function() {
         TorrentEngine.ready = true;
         TorrentEngine.total_pieces = engine.torrent.pieces.length;
@@ -143,11 +149,6 @@ TorrentEngine.init = function(torrent, opts) {
         // Pause or resume the swarm when interest changes
         engine.on("uninterested", function() { engine.swarm.pause(); });
         engine.on("interested", function() { engine.swarm.resume(); });
-
-        // Explicit peer connection
-        TorrentEngine.connect.forEach(function(peer) {
-            engine.connect(peer);
-        });
 
         // We're ready
         TorrentEngine.emit("ready");

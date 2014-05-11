@@ -5,6 +5,8 @@ Command-line torrent downloader and HTTP streaming server
 
 `npm install -g tget`
 
+Based on the fantastic [torrent-stream](https://github.com/mafintosh/torrent-stream), by [mafintosh](https://github.com/mafintosh)
+
 ## Usage
 
 `tget <path|url|magnet> [options]`
@@ -65,8 +67,6 @@ If the `-S` option is given, no other option will be used.
 
 MIT
 
----
-
-Portion of streaming code taken from <https://github.com/mafintosh/peerflix>
+Portion of streaming code taken from [Peerflix](https://github.com/mafintosh/peerflix)
 
 Copyright (C) 2013 Mathias Buus Madsen <mathiasbuus@gmail.com>

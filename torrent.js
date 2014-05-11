@@ -34,10 +34,11 @@ TorrentEngine.ready = false;
 TorrentEngine.done = false;
 TorrentEngine.opts = {
     connections: 100,
-    path: "./",
+    path: process.cwd(),
     verify: true,
     dht: 10000,
-    tracker: true
+    tracker: true,
+    name: "tget"
 };
 TorrentEngine.total_pieces = 0;
 TorrentEngine.finished_pieces = 0;

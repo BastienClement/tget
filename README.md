@@ -17,33 +17,14 @@ Command-line torrent downloader and HTTP streaming server
 
 |  Option      |  Description                          |  Default      |
 |--------------|---------------------------------------|---------------|
-|  `-b PATH`   |  Buffer path                          |  md5(source)  |
 |  `-c NUM`    |  Maximum connections                  |  100          |
 |  `-d NUM`    |  Number of DHT peers to find          |  10000        |
 |  `-e`        |  Ephemeral mode                       |               |
 |  `-i`        |  Stay idle and don't quit when done   |               |
-|  `-n`        |  Force a new download                 |               |
 |  `-p PEER`   |  Explicit peer (in the form addr:ip)  |               |
-|  `-s PORT?`  |  Enable live streaming on port N      |  8888         |
+|  `-s [PORT]` |  Enable live streaming on port N      |  8888         |
 |  `-t`        |  Disable trackers                     |               |
-|  `-w`        |  Wait for client before downloading   |               |
-
-### Buffer directory / Ephemeral mode
-
-The buffer directory is defined by the `-b` option. If not specified,
-the path is automatically generated from the download source.
-
-Two identical invocation of tget will generate the same buffer id.
-This allows tget to resume a previously canceled download unless the
-`-n` option is given.
-
-This buffer is used to store downloaded data and the .torrent file
-if the source was a magnet link. Buffer structure reflects torrent
-pieces structure and is not representative of files contained within
-it.
-
-When download is complete (or if the `-e` option is given), tget will
-delete this directory before exiting.
+|  `-w`        |  Wait for stream before downloading   |               |
 
 ### Video streaming
 

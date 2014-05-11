@@ -32,10 +32,9 @@ var TorrentEngine = new events.EventEmitter();
 
 TorrentEngine.ready = false;
 TorrentEngine.done = false;
-TorrentEngine.id = null;
 TorrentEngine.opts = {
     connections: 100,
-    path: null,
+    path: "./",
     verify: true,
     dht: 10000,
     tracker: true
@@ -55,21 +54,15 @@ TorrentEngine.load = function(torrent, opts, cb) {
         return cb(null);
     }
 
-    // Compute download id and buffer path
-    var md5 = crypto.createHash("md5");
-    md5.update(torrent);
-
-    TorrentEngine.id = md5.digest("hex");
-    TorrentEngine.opts.path = path.join(process.cwd(), TorrentEngine.id);
-
     // Options
     if(opts.c) { TorrentEngine.opts.connections = opts.c; }
-    if(opts.b) { TorrentEngine.opts.path = opts.b; }
-    if(opts.n) { TorrentEngine.opts.verify = false; }
-    if(opts.d) { TorrentEngine.opts.dht = opts.d; }
+    if(opts.d) { TorrentEngine.opts.dht = opts.d || false; }
     if(opts.t) { TorrentEngine.opts.tracker = false; }
-    if(opts.e) { ephemeral = true; }
     if(opts.w) { wait = true; }
+    if(opts.e) {
+        ephemeral = true;
+        TorrentEngine.opts.path = null;
+    }
 
     if(opts.p) {
         if(Array.isArray(opts.p)) {

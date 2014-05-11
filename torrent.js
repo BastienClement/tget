@@ -178,6 +178,8 @@ TorrentEngine.exit = function(cb) {
             engine.remove(!ephemeral, function() {
                 cb()
             });
+        } else {
+            cb();
         }
     });
 };

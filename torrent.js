@@ -48,6 +48,13 @@ var ephemeral = false;
 var wait = false;
 var download_snapshot = 0;
 
+function checkDone() {
+    if(TorrentEngine.finished_pieces == TorrentEngine.total_pieces) {
+        TorrentEngine.done = true;
+        TorrentEngine.emit("done");
+    }
+};
+
 TorrentEngine.load = function(torrent, opts, cb) {
     // Missing argument
     if(!torrent) {
@@ -59,9 +66,10 @@ TorrentEngine.load = function(torrent, opts, cb) {
     if(opts.d) { TorrentEngine.opts.dht = opts.d || false; }
     if(opts.t) { TorrentEngine.opts.tracker = false; }
     if(opts.w) { wait = true; }
+
     if(opts.e) {
         ephemeral = true;
-        TorrentEngine.opts.path = null;
+        TorrentEngine.opts.path = null;  // Will download to /tmp
     }
 
     if(opts.p) {
@@ -100,6 +108,7 @@ TorrentEngine.load = function(torrent, opts, cb) {
 };
 
 TorrentEngine.init = function(torrent, opts) {
+    // TorrentStream instance
     TorrentEngine.engine = engine = torrentStream(torrent, opts || TorrentEngine.opts);
 
     // Explicit peer connection
@@ -107,6 +116,7 @@ TorrentEngine.init = function(torrent, opts) {
         engine.connect(peer);
     });
 
+    // Wait for torrent metadata to be available
     engine.on("ready", function() {
         TorrentEngine.ready = true;
         TorrentEngine.total_pieces = engine.torrent.pieces.length;
@@ -130,13 +140,13 @@ TorrentEngine.init = function(torrent, opts) {
                 ++TorrentEngine.finished_pieces;
             }
         }
-        TorrentEngine._checkDone();
+        checkDone();
 
         // New piece downlaoded
         engine.on("verify", function() {
             download_snapshot = engine.swarm.downloaded;
             ++TorrentEngine.finished_pieces;
-            TorrentEngine._checkDone();
+            checkDone();
         });
 
         // Pause or resume the swarm when interest changes
@@ -145,48 +155,6 @@ TorrentEngine.init = function(torrent, opts) {
 
         // We're ready
         TorrentEngine.emit("ready");
-    });
-};
-
-TorrentEngine._checkDone = function() {
-    if(TorrentEngine.finished_pieces == TorrentEngine.total_pieces) {
-        TorrentEngine._writeFiles();
-    }
-};
-
-var writing_files = false;
-TorrentEngine._writeFiles = function() {
-    if(writing_files) return;
-    writing_files = true;
-
-    // Ephemeral mode doesn't write files
-    if(ephemeral) {
-        TorrentEngine.done = true;
-        TorrentEngine.emit("done");
-        return;
-    }
-
-    var files_done = 0;
-    TorrentEngine.files.forEach(function(file) {
-        // Ensure the file's directory is available
-        var file_dir = path.join(".", path.dirname(file.path));
-        if(file_dir != ".") {
-            mkdirp.sync(file_dir);
-        }
-
-        var s_out = fs.createWriteStream(file.path);
-        var s_in = file.createReadStream();
-
-        // Watch write completion
-        s_out.on("close", function() {
-            if(++files_done >= TorrentEngine.files.length) {
-                TorrentEngine.done = true;
-                TorrentEngine.emit("done");
-            }
-        })
-
-        // Let's go!
-        s_in.pipe(s_out);
     });
 };
 
@@ -203,14 +171,12 @@ TorrentEngine.downloadedBytes = function() {
     return (TorrentEngine.finished_pieces * engine.torrent.pieceLength) + (engine.swarm.downloaded - download_snapshot);
 };
 
-TorrentEngine.exit = function(purge, cb) {
+TorrentEngine.exit = function(cb) {
     engine.destroy(function() {
-        if(purge) {
-            engine.remove(function() {
+        if(ephemeral || TorrentEngine.done) {
+            engine.remove(!ephemeral, function() {
                 cb()
             });
-        } else {
-            cb()
         }
     });
 };

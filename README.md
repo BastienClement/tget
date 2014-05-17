@@ -24,6 +24,7 @@ Based on the fantastic [torrent-stream](https://github.com/mafintosh/torrent-str
 |  `-e`        |  Ephemeral mode                       |               |
 |  `-i`        |  Stay idle and don't quit when done   |               |
 |  `-p PEER`   |  Explicit peer (in the form addr:ip)  |               |
+|  `-q`        |  Quiet mode                           |               |
 |  `-s [PORT]` |  Enable live streaming on port N      |  8888         |
 |  `-t`        |  Disable trackers                     |               |
 |  `-w`        |  Wait for stream before downloading   |               |

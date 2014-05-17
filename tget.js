@@ -41,6 +41,8 @@ if(argv.w) {
     argv.i = true;
 }
 
+var verbose = !argv.q;
+
 //
 // File stream mode
 //
@@ -52,7 +54,7 @@ if(argv.S) {
     }
 
     if(!fs.existsSync(local_path)) {
-        console.log("Usage: tget -S [port] <path>");
+        console.error("Usage: tget -S [port] <path>");
         return;
     }
 
@@ -78,13 +80,16 @@ if(argv.S) {
     // Fake torrent-stream files structure
     torrentize(local_path);
 
-    console.log("Available files:");
-    files.forEach(function(file, i) {
-        console.log("  [" + (i+1) + "] " + file.name);
-    });
-
     StreamServer.init(argv.S, files);
-    console.log("\nLocal streaming enabled on port " + StreamServer.port + " (default file is " + StreamServer.def_idx + ")");
+
+    if(verbose) {
+        console.log("Available files:");
+        files.forEach(function(file, i) {
+            console.log("  [" + (i+1) + "] " + file.name);
+        });
+
+        console.log("\nLocal streaming enabled on port " + StreamServer.port + " (default file is " + StreamServer.def_idx + ")");
+    }
     return;
 }
 
@@ -94,7 +99,7 @@ if(argv.S) {
 TorrentEngine.load(argv._[0], argv, function(torrent) {
     // Missing or invalid argument
     if(!torrent) {
-        console.log("Usage: tget <path|url|magnet> [options]");
+        console.error("Usage: tget <path|url|magnet> [options]");
         return;
     }
 
@@ -123,17 +128,19 @@ TorrentEngine.load(argv._[0], argv, function(torrent) {
     });
 
     rl.setPrompt("");
-    rl.write("Initializing torrent engine...");
+    if(verbose) rl.write("Initializing torrent engine...");
 
     TorrentEngine.on("ready", function() {
-        rl.write(" Ready.\n\n");
+        if(verbose) {
+            rl.write(" Ready.\n\n");
 
-        rl.write("Downloading files:\n");
-        TorrentEngine.files.forEach(function(file, i) {
-            rl.write("  [" + (i+1) + "] " + file.path + "\n");
-        });
+            rl.write("Downloading files:\n");
+            TorrentEngine.files.forEach(function(file, i) {
+                rl.write("  [" + (i+1) + "] " + file.path + "\n");
+            });
 
-        rl.write("\n");
+            rl.write("\n");
+        }
 
         function print_progress() {
             var buf = [];
@@ -198,11 +205,11 @@ TorrentEngine.load(argv._[0], argv, function(torrent) {
             }
         }
 
-        setInterval(update_gui, 1000);
+        if(verbose) setInterval(update_gui, 1000);
 
         // Download is fully done
         TorrentEngine.on("done", function() {
-            update_gui(true);
+            if(verbose) update_gui(true);
             exit(false);
         });
 
@@ -210,8 +217,10 @@ TorrentEngine.load(argv._[0], argv, function(torrent) {
         if(argv.s) {
             StreamServer.init(argv.s, TorrentEngine.files);
 
-            rl.write("Streaming enabled on port " + StreamServer.port);
-            rl.write(" (default file is " + StreamServer.def_idx + ")\n\n");
+            if(verbose) {
+                rl.write("Streaming enabled on port " + StreamServer.port);
+                rl.write(" (default file is " + StreamServer.def_idx + ")\n\n");
+            }
 
             StreamServer.on("stream-close", function() {
                 exit(false);
@@ -219,6 +228,6 @@ TorrentEngine.load(argv._[0], argv, function(torrent) {
         }
 
         // Initial progress bar painting
-        update_gui();
+        if(verbose) update_gui();
     });
 });

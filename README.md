@@ -27,6 +27,7 @@ Based on the fantastic [torrent-stream](https://github.com/mafintosh/torrent-str
 |  `-q`        |  Quiet mode                           |               |
 |  `-s [PORT]` |  Enable live streaming on port N      |  8888         |
 |  `-t`        |  Disable trackers                     |               |
+|  `-u NUM`    |  Maximum upload slots                 |  10           |
 |  `-w`        |  Wait for stream before downloading   |               |
 
 ### Video streaming

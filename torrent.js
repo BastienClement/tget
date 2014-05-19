@@ -34,6 +34,7 @@ TorrentEngine.ready = false;
 TorrentEngine.done = false;
 TorrentEngine.opts = {
     connections: 100,
+    uploads: 10,
     path: process.cwd(),
     verify: true,
     dht: 10000,
@@ -66,6 +67,7 @@ TorrentEngine.load = function(torrent, opts, cb) {
     if(opts.c) { TorrentEngine.opts.connections = opts.c; }
     if(opts.d) { TorrentEngine.opts.dht = opts.d || false; }
     if(opts.t) { TorrentEngine.opts.tracker = false; }
+    if(opts.u) { TorrentEngine.opts.uploads = opts.u; }
     if(opts.w) { wait = true; }
 
     if(opts.e) {

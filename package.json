@@ -1,6 +1,6 @@
 {
     "name": "tget",
-    "version": "0.6.0",
+    "version": "0.7.0",
     "license": "MIT",
     "repository": "git://github.com/galedric/tget.git",
     "description": "Command-line torrent downloader and HTTP streaming server",

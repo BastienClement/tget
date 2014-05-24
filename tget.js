@@ -28,7 +28,19 @@ var utils = require("./utils");
 var fs = require("fs");
 var path = require("path");
 var readline = require("readline");
-var argv = require("minimist")(process.argv.slice(2));
+var argv = require("rc")("tget");
+
+// Alias long options
+if(argv.connections) argv.c = argv.connections;
+if(argv.dht) argv.d = argv.dht;
+if(argv.ephemeral) argv.e = argv.ephemeral;
+if(argv.idle) argv.i = argv.idle;
+if(argv.peer) argv.p = argv.peer;
+if(argv.quiet) argv.q = argv.quiet;
+if(argv.stream) argv.s = argv.stream;
+if(argv.notracker) argv.t = argv.notracker;
+if(argv.uploads) argv.u = argv.uploads;
+if(argv.wait) argv.w = argv.wait;
 
 // Options check
 if(argv.w && !argv.s) {

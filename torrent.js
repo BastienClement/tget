@@ -65,7 +65,7 @@ TorrentEngine.load = function(torrent, opts, cb) {
 
     // Options
     if(opts.c) { TorrentEngine.opts.connections = opts.c; }
-    if(opts.d) { TorrentEngine.opts.dht = opts.d || false; }
+    if(opts.d) { TorrentEngine.opts.dht = (!opts.d || opts.d === true) ? false : opts.d; }
     if(opts.t) { TorrentEngine.opts.tracker = false; }
     if(opts.u) { TorrentEngine.opts.uploads = opts.u; }
     if(opts.w) { wait = true; }

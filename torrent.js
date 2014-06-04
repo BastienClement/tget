@@ -114,6 +114,10 @@ TorrentEngine.init = function(torrent, opts) {
     // TorrentStream instance
     TorrentEngine.engine = engine = torrentStream(torrent, opts || TorrentEngine.opts);
 
+    if(opts.l) {
+        engine.listen(opts.l);
+    }
+
     // Explicit peer connection
     TorrentEngine.connect.forEach(function(peer) {
         engine.connect(peer);

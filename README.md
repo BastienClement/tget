@@ -17,18 +17,19 @@ Based on the fantastic [torrent-stream](https://github.com/mafintosh/torrent-str
 
 ### Options
 
-|  Option      |  Description                          |  Default      |
-|--------------|---------------------------------------|---------------|
-|  `-c NUM`    |  Maximum connections                  |  100          |
-|  `-d NUM`    |  Number of DHT peers to find          |  10000        |
-|  `-e`        |  Ephemeral mode                       |               |
-|  `-i`        |  Stay idle and don't quit when done   |               |
-|  `-p PEER`   |  Explicit peer (in the form addr:ip)  |               |
-|  `-q`        |  Quiet mode                           |               |
-|  `-s [PORT]` |  Enable live streaming on port N      |  8888         |
-|  `-t`        |  Disable trackers                     |               |
-|  `-u NUM`    |  Maximum upload slots                 |  10           |
-|  `-w`        |  Wait for stream before downloading   |               |
+|  Option      |  Long name      |  Description                          |  Default      |
+|--------------|-----------------|---------------------------------------|---------------|
+|  `-c NUM`    |  `connections`  |  Maximum connections                  |  100          |
+|  `-d NUM`    |  `dht`          |  Number of DHT peers to find          |  10000        |
+|  `-e`        |  `ephemeral`    |  Ephemeral mode                       |               |
+|  `-i`        |  `idle`         |  Stay idle and don't quit when done   |               |
+|  `-l PORT`   |  `listen`       |  Listen for incoming connections      |               |
+|  `-p PEER`   |  `peer`         |  Explicit peer (in the form addr:ip)  |               |
+|  `-q`        |  `quiet`        |  Quiet mode                           |               |
+|  `-s [PORT]` |  `stream`       |  Enable live streaming on given port  |  8888         |
+|  `-t`        |  `notracker`    |  Disable trackers                     |               |
+|  `-u NUM`    |  `uploads`      |  Maximum upload slots                 |  10           |
+|  `-w`        |  `wait`         |  Wait for stream before downloading   |               |
 
 ### Video streaming
 

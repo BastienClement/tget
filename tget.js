@@ -35,6 +35,7 @@ if(argv.connections) argv.c = argv.connections;
 if(argv.dht) argv.d = argv.dht;
 if(argv.ephemeral) argv.e = argv.ephemeral;
 if(argv.idle) argv.i = argv.idle;
+if(argv.listen) argv.l = argv.listen;
 if(argv.peer) argv.p = argv.peer;
 if(argv.quiet) argv.q = argv.quiet;
 if(argv.stream) argv.s = argv.stream;

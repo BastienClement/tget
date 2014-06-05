@@ -48,6 +48,7 @@ TorrentEngine.connect = [];
 var engine;
 var ephemeral = false;
 var wait = false;
+var listen = false;
 var download_snapshot = 0;
 
 function checkDone() {
@@ -68,6 +69,7 @@ TorrentEngine.load = function(torrent, opts, cb) {
     if(opts.d) { TorrentEngine.opts.dht = (!opts.d || opts.d === true) ? false : opts.d; }
     if(opts.t) { TorrentEngine.opts.tracker = false; }
     if(opts.u) { TorrentEngine.opts.uploads = opts.u; }
+    if(opts.l) { listen = opts.l; }
     if(opts.w) { wait = true; }
 
     if(opts.e) {
@@ -114,8 +116,8 @@ TorrentEngine.init = function(torrent, opts) {
     // TorrentStream instance
     TorrentEngine.engine = engine = torrentStream(torrent, opts || TorrentEngine.opts);
 
-    if(opts.l) {
-        engine.listen(opts.l);
+    if(listen) {
+        engine.listen(listen);
     }
 
     // Explicit peer connection

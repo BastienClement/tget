@@ -232,7 +232,12 @@ TorrentEngine.load(argv._[0], argv, function(torrent) {
 
             if(verbose) {
                 rl.write("Streaming enabled on port " + StreamServer.port);
-                rl.write(" (default file is " + StreamServer.def_idx + ")\n\n");
+                if(StreamServer.use_m3u) {
+                    rl.write(" (using m3u playlist)");
+                } else {
+                    rl.write(" (default file is " + StreamServer.def_idx + ")");
+                }
+                rl.write("\n\n");
             }
 
             StreamServer.on("stream-close", function() {

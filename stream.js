@@ -36,12 +36,73 @@ var StreamServer = new events.EventEmitter();
 StreamServer.enabled = false;
 StreamServer.open_streams = 0;
 
+var media_extensions = [
+    "3gp",
+    "asf",
+    "wmv",
+    "au",
+    "avi",
+    "flv",
+    "mov",
+    "mp4",
+    "ogm",
+    "ogg",
+    "mkv",
+    "mka",
+    "ts",
+    "mpg",
+    "mp3",
+    "mp2",
+    "nsc",
+    "nut",
+    "ra",
+    "ram",
+    "rm",
+    "rv",
+    "rmbv",
+    "a52",
+    "dts",
+    "aac",
+    "flac",
+    "dv",
+    "vid",
+    "tta",
+    "tac",
+    "ty",
+    "wav",
+    "dts",
+    "xa"
+];
+
 StreamServer.init = function(port, files) {
     if(StreamServer.enabled) return;
     StreamServer.enabled = true;
 
     // Default port number
     StreamServer.port = (typeof port != "number" || port < 0 || port > 65535) ? 8888 : port;
+
+    // Media files in this torrent
+    var media_files = files.map(function(f, i) {
+        var offset;
+        return {
+            name: f.path,
+            id:   i + 1,
+            ext:  (offset = f.path.lastIndexOf(".")) >= 0 && f.path.slice(offset + 1)
+        };
+    }).filter(function(f) {
+        // Try to match a predefined extension
+        if(f.ext && (media_extensions.indexOf(f.ext) !== -1)) {
+            return true;
+        }
+
+        // Try to match from MIME type
+        var mime_type = mime.lookup(f.name).split("/")[0];
+        if(mime_type === "audio" || mime_type === "video") {
+            return true;
+        }
+
+        return false;
+    });
 
     // Find the default file
     StreamServer.def_file = files.reduce(function(a, b) {
@@ -51,13 +112,27 @@ StreamServer.init = function(port, files) {
     // Default file's index
     StreamServer.def_idx = files.indexOf(StreamServer.def_file) + 1;
 
+    // Use m3u playlist as default
+    StreamServer.use_m3u = media_files.length > 1;
+
     // Create HTTP server
     var server = http.createServer();
     server.on("request", function(request, response) {
         var u = url.parse(request.url);
 
         if(u.pathname === "/favicon.ico") return response.end();
-        if(u.pathname === "/") u.pathname = "/" + StreamServer.def_idx;
+
+        if(u.pathname === "/") {
+            if(StreamServer.use_m3u) {
+                var host = request.headers.host || "localhost";
+                response.setHeader("Content-Type", "application/x-mpegurl; charset=utf-8");
+                return response.end("#EXTM3U\n" + media_files.map(function(f) {
+                    return "#EXTINF:-1," + f.name + "\n" + "http://" + host + "/" + f.id + "." + f.ext;
+                }).join("\n"));
+            } else {
+                u.pathname = "/" + StreamServer.def_idx;
+            }
+        }
 
         // Allow random file extensions to be given (http://127.0.0.1:8888/2.srt)
         var i = Number(u.pathname.slice(1).split(".")[0]) - 1;

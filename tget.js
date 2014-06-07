@@ -118,22 +118,32 @@ TorrentEngine.load(argv._[0], argv, function(torrent) {
 
     TorrentEngine.init(torrent);
 
-    // Exit safety check
-    function exit(force) {
-        if(!force && (!TorrentEngine.done || StreamServer.open_streams > 0 || argv.i)) return;
-
-        TorrentEngine.exit(function() {
-            rl.write("\n");
-            rl.close();
-            process.exit(0);
-        });
-    }
-
     // Create command line interface
     var rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout
     });
+
+    // Exit tget
+    function do_exit() {
+        rl.write("\n");
+        rl.close();
+        process.exit(0);
+    }
+
+    // Exit safety check
+    var exiting = false;
+    function exit(force) {
+        if(!force && (!TorrentEngine.done || StreamServer.open_streams > 0 || argv.i)) return;
+
+        if(exiting) {
+            do_exit();
+        } else {
+            exiting = true;
+        }
+
+        TorrentEngine.exit(do_exit);
+    }
 
     // Forceful exit
     rl.on("SIGINT", function() {
